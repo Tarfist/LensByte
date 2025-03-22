@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="LensByte - A modern curator for open-source repositories and projects">
+    <meta name="keywords" content="open-source, github, projects, repositories, programming">
+    <meta name="author" content="LensByte">
+    <meta name="theme-color" content="#4f46e5">
+    
+    <!-- Open Graph Meta Tags for better sharing -->
+    <meta property="og:title" content="LensByte">
+    <meta property="og:description" content="A modern curator for open-source repositories and projects">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://lensbyte.example.com">
+    <meta property="og:image" content="https://lensbyte.example.com/lensbyte-logo.png">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="LensByte">
+    <meta name="twitter:description" content="A modern curator for open-source repositories and projects">
+    <meta name="twitter:image" content="https://lensbyte.example.com/lensbyte-logo.png">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%234f46e5' d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-3-8c0-1.66 1.34-3 3-3s3 1.34 3 3-1.34 3-3 3-3-1.34-3-3z'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMnSURBVFhH7ZZNSFRRFMfPuW/eGD6TUjQhCKIWUZuIFkVEH0jbqE1QQhRBLQoRJYigRR+rWlQgFLUoalUUFUVCVItoE0FEBEH0TSYVY/Nxz+n/zp035s2bscyN4A/nh3ffu+fc8+4799x7hyAqj4x7L4+/kJ5Bg6MHzA6l42JVoDjRTzXROqoKrKW3X+/SidunxU+G8ojRzadGYVHNNB4bpYRJEBFJehx7TOce9qjvTKQqkFRJanrYSO1L2qhuQZ3j16BhCtwfeUAnB07R9+nvKmNIVeDUu5O0s2UntS9tFw0jjR7Lx63uQgUQPPf+jEg5Dtx4QLub9tDa2jXiM/mIgiY9KKl3tEdKDgydp73r99HK6hXiS4cfLDJJKJlVItH0Zzrj06wSCMEBtXZS8jS9/fGGGpc0UXWsWvxzZ0EKpFJJcUKYQVKcKMHoyBitXL9CvXHnESgMUkDnnWJ8TFRqXtpCDUsbxS8EKZAusbmk3FmKyaQOPCepqGgFOKFoJaZ8U3T5yRXHmEeDPQ1UVV0pbqFUVAFMsXQK8/L3F3r15RX9mflDBs3kz88zrXZctm42Tow5QZ+//dHXRPtc0WmIzLOqCsRkQUSsO6G74ieyJyoZE7Pu+LPG5ONWoH9D/0UBvFbVdq/XthvL5ybZb7fJT6UVx5RNPEhstyNjNc5WgPyBREGBAltX7M/lbDLYNmhLx1N6IpkFhUSWAj0DZ6mvZUD2fWMTY8a31wgZa0rGqAWOvzhGo5OjYnNlzZ+QbRisI6b8ZpHxV8DIrP+b2RWYzKe3jdJw4pYj+UiTqCfZS5Tx1cSpCmBRoQUJ3THHgxRQSYm8KYEJuyUVDzahrUFMdUiokILkJxpqG1wVQIZLJuXFGVqA81tIiO04tq4GNGa+zKoAUooBNGQjxJYGQc8lQ5PK7Suu5ddbK7D5yqasLqW+vp5qa2vFDsK+A4Io5j42lY/m5c1Zm9Iuvjsr+eJBBaChtBzm9v5j4i+MQgoUk5x7N3ALzj3f1PQFwDDWlHPGZ7YAAAAASUVORK5CYII=">
+    <link rel="icon" type="image/png" sizes="16x16" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEcSURBVDhPY/wPBAwUAlI1MPzX5v8vK8jHwMnBycDIyAjXfOfBXYbzF86BhUGaQRrhGmQE+Rl+//nDwMPDw8DGxgbXDALI4iDNMM0gxXANQEP/n79yg0FMVAysGQSQxZE1gzQiNIAUHL92G6wZHTx99YKBh5ePgZubm4GFhYWBmZkZYQAMoCvG0AACyApBGkGaQZpR/AfRYEUwwMnOwfDu/VsGTnbOzxISEoJMDAwNQA3LgfgBNH4ZIJkYgByYjwQYYBrAGm7evs0gJSV1XFpaOoCRkTEAyfIGaGJ5QLIRDtA1oGiAARgbZDmyATCALI7PcBAgygAYQDeEKANAANkQcgxgQHaJjIyM+P2HDx9evXr1YicQXyLHdQwMDAC/9GpKdYiJ2QAAAABJRU5ErkJggg==">
+    <link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAALmSURBVGhD7ZlLSFRRGMfPuXdGZ3QmzXzVlJRpapKURZC9jBZBQdADoh5QuxYtIoKgB7QJahNEm8iwTVFBULSMioqKoCAqWliRQVZQEaSVFfQY/8f/O/c4cxvnkcsUc3/wu2fm3Ps9ztc55ztHkYCAgIBFhOu5YlY82JG7bNGRnPQ17opMvijOy2yh3NRdlB6Xqm2W/JnqoVe/++jzxEcdtcnTEo/oeLCHDhXuxwrSlBlb66vpUlUbxRpxOuoG9AE1bimh0xWN2mZHzyNqf9REn36NapuJZyKW/NhsWnl8CcXFxGqbBWNE6Gs4fNnNxNOy0tK10DYix8pO0PpVG7TNEg6mDO0JsVmynrCEidhE7MhfSxtXb9I2E7kOeKrPO+FI2EUsL6mgo0VHKDYmVkd9YsJiLDgcCYuIZJIEbLp9j1Zn5+moJdQRsPi2iE2jQ7eacjZRVcdWbUNHwCJ8LxGbiOp1VVRYoJs7nAQs2OTcFLGNwPP65rxKbbPAFnHuPSgR+y7tyo5lG0VDoBHLWF6pHpMVpkgs2DLKyqQTUd62jZ6NvRDPQWMfSdWKuZiIubXd6hEzlqDXzA2RWIKPIKgRqiPQIV+9QCTotQSdIoaKBY1p9YRKxKK1TwlixFpQRzzvwJC2iFgsEWNEXyPwi2mJzF9XwIhYy1CKBFqCj1MieM3w80GJeI5FrJFwIKSIt3kcWmqUCAwYlUCXj07d07YgRqzNZEokP0O/u8gRs1cQNPQvTW50RXHFnFMik0IQx5vbqW/gqY6YsB1UEkJOiQzcu0FXHnZqVzAw6AghpExC5sJwH12+f4kikcg0d89wEkJjRfgYX46/o67+i9Q30EsJShyc4SIETJnH/TdvnJP+9uM7Dfb3ULzSgdRcZ15+yj+pE9FoNDq3Jc8zl/vP0e0nH6jrRg8tVeJE2IkADDhd7YMQYtzPERAQEBDgGUT0D3Ks+4UHG9DuAAAAAElFTkSuQmCC">
+    
+    <title>Lensbyte - Open Source Discovery</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="brand">
+                <i class="fas fa-glasses brand-icon"></i>
+                <h1>Lensbyte</h1>
+            </div>
+            
+            <div class="header-controls">
+                <div class="search-container">
+                    <input type="text" id="search-input" placeholder="Search projects...">
+                    <button id="search-button"><i class="fas fa-search"></i></button>
+                </div>
+                
+                <div class="theme-controls">
+                    <button id="theme-options-toggle" aria-label="Theme options">
+                        <i class="fas fa-palette"></i>
+                    </button>
+                    <div class="theme-options-panel" id="theme-options-panel">
+                        <h3>Theme Settings</h3>
+                        <div class="theme-option">
+                            <span>Mode</span>
+                            <div class="theme-switch">
+                                <input type="checkbox" id="theme-toggle">
+                                <label for="theme-toggle">
+                                    <i class="fas fa-sun"></i>
+                                    <i class="fas fa-moon"></i>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="theme-option">
+                            <span>Auto Switch</span>
+                            <div class="toggle-switch">
+                                <input type="checkbox" id="auto-theme-toggle">
+                                <label for="auto-theme-toggle"></label>
+                            </div>
+                        </div>
+                        <div class="theme-option time-settings">
+                            <div>
+                                <label for="light-time">Light at</label>
+                                <input type="time" id="light-time" value="08:00">
+                            </div>
+                            <div>
+                                <label for="dark-time">Dark at</label>
+                                <input type="time" id="dark-time" value="20:00">
+                            </div>
+                        </div>
+                        <div class="theme-option">
+                            <span>Accent Color</span>
+                            <div class="color-options">
+                                <button class="color-option" data-color="default" style="background: linear-gradient(90deg, #4f46e5, #8b5cf6)"></button>
+                                <button class="color-option" data-color="blue" style="background: linear-gradient(90deg, #2563eb, #3b82f6)"></button>
+                                <button class="color-option" data-color="green" style="background: linear-gradient(90deg, #059669, #10b981)"></button>
+                                <button class="color-option" data-color="orange" style="background: linear-gradient(90deg, #d97706, #f59e0b)"></button>
+                                <button class="color-option" data-color="red" style="background: linear-gradient(90deg, #dc2626, #ef4444)"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <nav class="main-nav">
+            <div class="nav-group">
+                <div class="nav-filters">
+                    <button class="active" data-filter="all">All Projects</button>
+                    <button data-filter="new">New</button>
+                    <button data-filter="popular">Popular</button>
+                </div>
+            </div>
+            
+            <div class="nav-group">
+                <div class="tag-logic-toggle">
+                    <span>Tag Logic:</span>
+                    <div class="toggle-container">
+                        <button class="logic-toggle active" data-logic="or">OR</button>
+                        <button class="logic-toggle" data-logic="and">AND</button>
+                    </div>
+                </div>
+                
+                <div class="view-options">
+                    <span>View:</span>
+                    <button data-view="grid" class="active" aria-label="Grid view">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                    <button data-view="list" aria-label="List view">
+                        <i class="fas fa-list"></i>
+                    </button>
+                </div>
+                
+                <div class="sort-options">
+                    <span>Sort:</span>
+                    <select id="sort-select">
+                        <option value="latest">Latest</option>
+                        <option value="popular">Most Popular</option>
+                        <option value="comments">Most Comments</option>
+                    </select>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="filters-container">
+            <div class="filters-section">
+                <div class="filters-header">
+                    <div class="tags-title">
+                        <h3>Tags</h3>
+                        <button id="sort-tags-button" title="Sort tags by relevance">
+                            <i class="fas fa-sort"></i>
+                        </button>
+                    </div>
+                    <div class="tag-filters" id="tag-filters">
+                        <!-- Tag filters will be added here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="active-filters" id="active-filters">
+            <!-- Active filters will be shown here -->
+        </div>
+        
+        <div class="loading">
+            <div class="spinner"></div>
+            <p>Loading projects...</p>
+        </div>
+        
+        <div class="projects-grid" id="projects-container">
+            <!-- Projects will be loaded here -->
+        </div>
+        
+        <div class="pagination" id="pagination-container">
+            <!-- Pagination will be added here -->
+        </div>
+        
+        <footer>
+            <p><span class="brand-text">Lensbyte</span> | Data from <a href="https://news.ycombinator.com" target="_blank">Hacker News</a> | Last updated: <span id="update-time"></span></p>
+            <p class="preferences-saved hidden" id="preferences-saved">Your preferences have been saved <i class="fas fa-check"></i></p>
+        </footer>
+    </div>
+    
+    <!-- Preview Modal -->
+    <div id="preview-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title"></h2>
+                <button class="close-modal" aria-label="Close preview">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="modal-loading">
+                    <div class="spinner"></div>
+                    <p>Loading details...</p>
+                </div>
+                <div class="modal-details">
+                    <div class="modal-metadata">
+                        <span id="modal-score"><i class="fas fa-star"></i> <span></span> points</span>
+                        <span id="modal-author"><i class="fas fa-user"></i> <span></span></span>
+                        <span id="modal-time"><i class="fas fa-clock"></i> <span></span></span>
+                    </div>
+                    <div class="modal-tags" id="modal-tags">
+                        <!-- Tags will be displayed here -->
+                    </div>
+                    <div class="modal-description" id="modal-description">
+                        <!-- Description will be loaded here -->
+                    </div>
+                    <div class="modal-comments" id="modal-comments">
+                        <h3>Top Comments</h3>
+                        <div id="comments-container">
+                            <!-- Comments will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a id="modal-link" href="#" target="_blank" class="modal-button">View Original</a>
+                <a id="modal-hn-link" href="#" target="_blank" class="modal-button">View on Hacker News</a>
+            </div>
+        </div>
+    </div>
+    
+    <template id="project-template">
+        <div class="project-card">
+            <div class="project-header">
+                <h2 class="project-title"></h2>
+                <span class="project-score"><i class="fas fa-star"></i> <span class="score-value"></span></span>
+            </div>
+            <p class="project-description"></p>
+            <div class="project-tags">
+                <!-- Tags will be added here -->
+            </div>
+            <div class="project-meta">
+                <span class="project-time"></span>
+                <a href="#" class="project-link" target="_blank">View <i class="fas fa-external-link-alt"></i></a>
+            </div>
+        </div>
+    </template>
+    
+    <template id="comment-template">
+        <div class="comment">
+            <div class="comment-header">
+                <span class="comment-author"></span>
+                <span class="comment-time"></span>
+            </div>
+            <div class="comment-text"></div>
+        </div>
+    </template>
+    
+    <template id="tag-button-template">
+        <button class="tag-button">
+            <i></i>
+            <span class="tag-name"></span>
+            <span class="tag-count"></span>
+        </button>
+    </template>
+    
+    <script src="script.js"></script>
+</body>
+</html>
