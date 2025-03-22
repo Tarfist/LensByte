@@ -1,0 +1,23 @@
+# Windows system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Node.js (if you decide to use npm packages in the future)
+node_modules/
+npm-debug.log
+
+# VS Code settings
+.vscode/
+
+# Other common files to ignore
+*.log
+*.bak
+*.tmp
