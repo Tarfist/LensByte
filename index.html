@@ -103,9 +103,13 @@
                     <button data-filter="new">New</button>
                     <button data-filter="popular">Popular</button>
                 </div>
+                
+                <div class="tag-filters-inline" id="tag-filters">
+                    <!-- Tag filters will be added here -->
+                </div>
             </div>
             
-            <div class="nav-group">
+            <div class="nav-group controls-group">
                 <div class="tag-logic-toggle">
                     <span>Tag Logic:</span>
                     <div class="toggle-container">
@@ -132,24 +136,12 @@
                         <option value="comments">Most Comments</option>
                     </select>
                 </div>
+                
+                <button id="sort-tags-button" title="Sort tags by relevance" class="sort-tags-inline">
+                    <i class="fas fa-sort"></i>
+                </button>
             </div>
         </nav>
-        
-        <div class="filters-container">
-            <div class="filters-section">
-                <div class="filters-header">
-                    <div class="tags-title">
-                        <h3>Tags</h3>
-                        <button id="sort-tags-button" title="Sort tags by relevance">
-                            <i class="fas fa-sort"></i>
-                        </button>
-                    </div>
-                    <div class="tag-filters" id="tag-filters">
-                        <!-- Tag filters will be added here -->
-                    </div>
-                </div>
-            </div>
-        </div>
         
         <div class="active-filters" id="active-filters">
             <!-- Active filters will be shown here -->

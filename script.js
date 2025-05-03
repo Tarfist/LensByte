@@ -16,7 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // Global variables
-const ITEMS_PER_PAGE = 9;
+const ITEMS_PER_PAGE = 18; // Increased from 9 to show more posts per page
 let currentPage = 1;
 let allProjects = [];
 let filteredProjects = [];
@@ -702,29 +702,172 @@ function sortProjects() {
 // Fetch projects from Hacker News API
 async function fetchProjects() {
     try {
-        // First, get the newest stories IDs
-        const response = await fetch('https://hacker-news.firebaseio.com/v0/topstories.json');
-        const storyIds = await response.json();
+        // Show loading indicator
+        document.body.classList.remove('loaded');
         
-        // We'll take the top 100 stories for more content to paginate
-        const topStories = storyIds.slice(0, 100);
+        // Add a status message to the UI
+        const projectsContainer = document.getElementById('projects-container');
+        projectsContainer.innerHTML = `
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading stories from Hacker News...</p>
+            </div>
+        `;
         
-        // Fetch details for each story
-        const storyPromises = topStories.map(id => 
-            fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-            .then(response => response.json())
+        // Initialize an array to hold all story IDs from different sources
+        let allStoryIds = [];
+        
+        // Define the Hacker News endpoints we want to fetch from
+        const endpoints = [
+            'topstories',     // Top stories
+            'newstories',     // New stories
+            'beststories',    // Best stories
+            'showstories',    // Show HN
+            'askstories'      // Ask HN
+        ];
+        
+        // Fetch story IDs from all endpoints
+        const endpointPromises = endpoints.map(endpoint => 
+            fetch(`https://hacker-news.firebaseio.com/v0/${endpoint}.json`)
+                .then(response => response.json())
         );
         
-        const stories = await Promise.all(storyPromises);
+        // Wait for all endpoint requests to complete
+        const endpointResults = await Promise.all(endpointPromises);
         
-        // Filter for likely open-source projects (github, gitlab, etc.)
-        allProjects = stories.filter(story => {
-            const urlPattern = /github\.com|gitlab\.com|opensource|open-source|bitbucket\.org/i;
-            return story.url && (
-                urlPattern.test(story.url) || 
-                (story.title && /\b(open source|release|launch|project)\b/i.test(story.title))
-            );
+        // Combine all story IDs, removing duplicates
+        endpointResults.forEach(ids => {
+            if (Array.isArray(ids)) {
+                allStoryIds = [...allStoryIds, ...ids];
+            }
         });
+        
+        // Remove duplicate story IDs using Set
+        allStoryIds = [...new Set(allStoryIds)];
+        
+        console.log(`Total unique stories found from API endpoints: ${allStoryIds.length}`);
+        
+        // Get the most recent item ID to determine the latest ID
+        const maxIdResponse = await fetch('https://hacker-news.firebaseio.com/v0/maxitem.json');
+        const maxId = await maxIdResponse.json();
+        console.log(`Current max item ID from Hacker News: ${maxId}`);
+        
+        // For historical content, we'll also fetch older items by ID
+        // We'll grab items from various points in Hacker News history
+        // This gives us a broad sample across time rather than just recent posts
+        const historicalTimePeriods = [
+            // Recent past (last few months)
+            { start: maxId - 100000, count: 200 },
+            
+            // 6 months to 1 year ago (approximate)
+            { start: maxId - 500000, count: 200 },
+            
+            // 1-2 years ago (approximate)
+            { start: maxId - 1000000, count: 200 },
+            
+            // 3-5 years ago (approximate)
+            { start: maxId - 3000000, count: 200 },
+            
+            // Older content (5+ years ago)
+            { start: maxId - 8000000, count: 200 }
+        ];
+        
+        // Generate historical IDs to fetch
+        let historicalIds = [];
+        historicalTimePeriods.forEach(period => {
+            if (period.start > 0) {
+                // Generate random IDs within the period's range
+                for (let i = 0; i < period.count; i++) {
+                    const randomOffset = Math.floor(Math.random() * 100000);
+                    const id = Math.max(1, period.start + randomOffset);
+                    historicalIds.push(id);
+                }
+            }
+        });
+        
+        // Combine with current stories and remove duplicates
+        allStoryIds = [...new Set([...allStoryIds, ...historicalIds])];
+        
+        console.log(`Total stories to process (including historical): ${allStoryIds.length}`);
+        
+        // Limit to a reasonable number to avoid performance issues
+        // Increase this number for more historical content
+        const storiesToFetch = allStoryIds.slice(0, 2000);
+        
+        // Update loading message with total count
+        document.querySelector('.loading p').textContent = 
+            `Loading ${storiesToFetch.length} stories from Hacker News...`;
+        
+        // Fetch details for each story in batches to avoid overwhelming the API
+        const BATCH_SIZE = 50;
+        let allStories = [];
+        let successfulFetches = 0;
+        
+        for (let i = 0; i < storiesToFetch.length; i += BATCH_SIZE) {
+            const batch = storiesToFetch.slice(i, i + BATCH_SIZE);
+            
+            // Update loading message with progress
+            document.querySelector('.loading p').textContent = 
+                `Loading stories from Hacker News... (${Math.min(i + BATCH_SIZE, storiesToFetch.length)}/${storiesToFetch.length})`;
+            
+            const batchPromises = batch.map(id => 
+                fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
+                    .then(response => response.json())
+                    .catch(err => {
+                        console.warn(`Failed to fetch item ${id}:`, err);
+                        return null;
+                    })
+            );
+            
+            try {
+                const batchResults = await Promise.all(batchPromises);
+                const validResults = batchResults.filter(story => 
+                    story !== null && story.type === 'story' && !story.deleted && !story.dead
+                );
+                
+                successfulFetches += validResults.length;
+                allStories = [...allStories, ...validResults];
+                
+                // Update loading message with success count
+                document.querySelector('.loading p').textContent = 
+                    `Loading stories from Hacker News... (${Math.min(i + BATCH_SIZE, storiesToFetch.length)}/${storiesToFetch.length}) - Found ${successfulFetches} valid stories`;
+            } catch (err) {
+                console.error('Error fetching batch:', err);
+            }
+        }
+        
+        console.log(`Successfully fetched ${allStories.length} valid stories`);
+        
+        // Save a timestamp of when we last updated the archive
+        localStorage.setItem('lastArchiveUpdate', Date.now());
+        
+        // Expand filter criteria to include more stories that might be interesting projects
+        allProjects = allStories.filter(story => {
+            // Skip deleted, dead or null stories
+            if (!story || story.deleted || story.dead) return false;
+            
+            // Accept ALL stories that have a URL - most HN posts with links are interesting
+            if (story.url) return true;
+            
+            // Accept all Show HN and Ask HN posts
+            if (story.title && (story.title.toLowerCase().includes('show hn') || story.title.toLowerCase().includes('ask hn'))) {
+                return true;
+            }
+            
+            // Accept all stories with text content
+            if (story.text && story.text.length > 0) {
+                return true;
+            }
+            
+            // If we got this far, include any story with a score of at least 5
+            if (story.score && story.score >= 5) {
+                return true;
+            }
+            
+            return false;
+        });
+        
+        console.log(`Found ${allProjects.length} potential open-source projects`);
         
         // Reset tag counts
         tagCounts = {};
@@ -738,6 +881,17 @@ async function fetchProjects() {
                 tagCounts[tag] = (tagCounts[tag] || 0) + 1;
             });
             
+            return project;
+        });
+        
+        // Add "year" tag to help filter by time period
+        allProjects = allProjects.map(project => {
+            if (project.time) {
+                const year = new Date(project.time * 1000).getFullYear();
+                const yearTag = `y${year}`;
+                project.tags.push(yearTag);
+                tagCounts[yearTag] = (tagCounts[yearTag] || 0) + 1;
+            }
             return project;
         });
         
